@@ -1,0 +1,34 @@
+<!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
+<idea-plugin url="http://github.com/CharlesLgn/IntelliTwitch">
+  <!-- Unique identifier of the plugin. It should be FQN. It cannot be changed between the plugin versions. -->
+  <id>com.charleslgn.IntelliTwitch</id>
+  <name>IntelliTwitch</name>
+
+  <vendor url="https://www.CharlesLgn.github.io">CharlesLgn</vendor>
+
+  <idea-version since-build="2024.1" />
+  <description><![CDATA[
+    Plugin to see twitch chat
+  ]]></description>
+
+  <!-- Product and plugin compatibility requirements.
+       Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
+  <depends>com.intellij.modules.platform</depends>
+
+  <!-- Extension points defined by the plugin.
+       Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
+  <extensions defaultExtensionNs="com.intellij">
+    <toolWindow id="TwitchChat"
+                secondary="true"
+                icon="com.charleslgn.intellitwitch.ui.icons.IntelliTwitchIcons.TwitchToolWindow"
+                anchor="right"
+                factoryClass="com.charleslgn.intellitwitch.ui.toolwindow.ChatTwitchToolWindowFactory"/>
+    <applicationService
+        serviceImplementation="com.charleslgn.intellitwitch.settings.AppSettings"/>
+    <applicationConfigurable
+        parentId="tools"
+        instance="com.charleslgn.intellitwitch.settings.AppSettingsConfigurable"
+        id="com.charleslgn.intellitwitch.settings.AppSettingsConfigurable"
+        displayName="IntelliTwitch Settings"/>
+  </extensions>
+</idea-plugin>
