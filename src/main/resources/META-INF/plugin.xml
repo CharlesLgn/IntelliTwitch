@@ -23,6 +23,7 @@
                 icon="com.charleslgn.intellitwitch.ui.icons.IntelliTwitchIcons.Twitch"
                 anchor="right"
                 factoryClass="com.charleslgn.intellitwitch.ui.toolwindow.ChatTwitchToolWindowFactory"/>
+
     <applicationService
         serviceImplementation="com.charleslgn.intellitwitch.settings.AppSettings"/>
     <applicationConfigurable

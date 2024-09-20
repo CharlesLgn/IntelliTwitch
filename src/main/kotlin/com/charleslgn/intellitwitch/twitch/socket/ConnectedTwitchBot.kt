@@ -62,16 +62,23 @@ class ConnectedTwitchBot(
      * @param streamer the channel to send a message
      * @param message the message to send
      */
-    fun sendAndWaitAwnser(streamer: String, message: String) = sendRawSocketMessageAndWait("PRIVMSG #$streamer :$message")
+    fun sendAndWaitAnswer(streamer: String, message: String) = sendRawSocketMessageAndWait("PRIVMSG #$streamer :$message")
 
     /**
      * reply to a message.
      * @param messageToAnswer the targeted message to answer
      * @param message the message to send
      */
-    fun answer(messageToAnswer: Message, message: String) {
-        sendRawSocketMessage("@reply-parent-msg-id=" + messageToAnswer.id + " PRIVMSG #" + messageToAnswer.streamerName + " :" + message)
-    }
+    fun answer(messageToAnswer: Message, message: String) = sendRawSocketMessage(answerMessage(messageToAnswer, message))
+
+    /**
+     * send a message to a specific channel.
+     * @param streamer the channel to send a message
+     * @param message the message to send
+     */
+    fun answerAndWaitAnswer(messageToAnswer: Message, message: String) = sendRawSocketMessageAndWait(answerMessage(messageToAnswer, message))
+
+    private fun answerMessage(messageToAnswer: Message, message: String) = "@reply-parent-msg-id=${messageToAnswer.id} PRIVMSG #${messageToAnswer.streamerName} :$message"
 
     /**
      * This command sends a private message to another user on Twitch.
