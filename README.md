@@ -24,3 +24,14 @@ for the project :
 ```
 
 you can now run it via `graddle`
+
+## Roadmap (can evolve)
+
+- ✅ Connect to twitch API
+- ✅ Choose twitch channel to watch
+- ✅ Read chat
+- ✅ Write in chat
+- Answer a chat message
+- Moderate chat (delete message/ban user/...)
+- ✅ Show user info in chat (badge/color/...)
+- Show chat emote
