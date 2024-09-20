@@ -20,7 +20,6 @@ class AppSettings: PersistentStateComponent<AppSettings.State> {
     }
 
     val refreshTwitchToken: String? get() = state.refreshTwitchToken
-    val tmiOAuthToken: String? get() = state.tmiOAuthToken
 
     companion object {
         val instance: AppSettings
@@ -29,6 +28,5 @@ class AppSettings: PersistentStateComponent<AppSettings.State> {
 
     class State {
         var refreshTwitchToken: String? = null
-        var tmiOAuthToken: String? = null
     }
 }

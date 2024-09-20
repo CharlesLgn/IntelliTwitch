@@ -1,7 +1,9 @@
 package com.charleslgn.intellitwitch.settings
 
-import com.intellij.ui.components.JBTextField
+import com.charleslgn.intellitwitch.ui.icons.IntelliTwitchIcons
+import com.intellij.ui.JBColor
 import com.intellij.util.ui.FormBuilder
+import java.awt.Color
 import javax.swing.JButton
 import javax.swing.JComponent
 import javax.swing.JPanel
@@ -12,14 +14,17 @@ import javax.swing.JPanel
  */
 class AppSettingsComponent {
 
+    var status:TokenStatus = TokenStatus.UNMODIFIED
+
     private var myMainPanel: JPanel? = null
-    private val tmiOauthTokenField = JBTextField()
-    private val connectToTwitchButton = JButton("Connect/Reconnect to Twitch")
+    private val connectToTwitchButton = JButton("Connect/Reconnect to Twitch", IntelliTwitchIcons.Twitch)
 
     init {
-        connectToTwitchButton.addActionListener { TwitchOAuth2Action().connect() }
+        connectToTwitchButton.addActionListener {
+            TwitchOAuth2Action().connect()
+            status = TokenStatus.GENERATED
+        }
         myMainPanel = FormBuilder.createFormBuilder()
-            .addLabeledComponent("TMI OAuth token:", tmiOauthTokenField, 1, false)
             .addComponent(connectToTwitchButton, 1)
             .addComponentFillVertically(JPanel(), 0)
             .panel
@@ -30,12 +35,10 @@ class AppSettingsComponent {
     }
 
     fun getPreferredFocusedComponent(): JComponent {
-        return tmiOauthTokenField
+        return connectToTwitchButton
     }
 
-    var tmiOauthTokenText: String?
-        get() = tmiOauthTokenField.text
-        set(value) {
-            this.tmiOauthTokenField.text = value
-        }
+    enum class TokenStatus {
+        UNMODIFIED, GENERATED
+    }
 }

@@ -18,11 +18,10 @@ import java.io.InputStreamReader
 
 class TwitchApiImpl(
     private val jsonParser: Klaxon = Klaxon(),
-    private val client:TwitchClient = TwitchClient.instance
-    ) : TwitchApi {
+    private val client:TwitchClient = TwitchClient.instance) : TwitchApi {
 
-    private var authorization: String = ""
-    var refreshToken: String = ""
+    override var oauthToken: String = ""
+    private var refreshToken: String = ""
 
     private var badgesGlobal: Collection<BadgeData>? = null
 
@@ -74,7 +73,7 @@ class TwitchApiImpl(
         val boby = rd.readLine()
         rd.close()
         val data = jsonParser.parse<TwitchAccessData>(boby)!!
-        this.authorization = "Bearer " + data.accessToken
+        this.oauthToken = data.accessToken
         this.refreshToken = data.refreshToken
         AppSettings.instance.state.refreshTwitchToken = data.refreshToken
     }
@@ -82,11 +81,11 @@ class TwitchApiImpl(
     private inline fun <reified T> fetchFirst(url: String): T = fetchAll<T>(url).first()
 
     private inline fun <reified T> fetchAll(url: String): Collection<T> {
-        while (authorization.isEmpty()) Thread.sleep(100)
+        while (oauthToken.isEmpty()) Thread.sleep(100)
         val client: HttpClient = HttpClientBuilder.create().build()
         val request = HttpGet(url)
         request.addHeader("Client-Id", TwitchClient.instance.id)
-        request.addHeader("Authorization", authorization)
+        request.addHeader("Authorization", "Bearer $oauthToken")
         val response: HttpResponse = client.execute(request)
         val rd = BufferedReader(InputStreamReader(response.entity.content))
         val boby = rd.readLine()

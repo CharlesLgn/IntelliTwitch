@@ -9,5 +9,5 @@ import javax.swing.Icon
 @Suppress("unused")
 object IntelliTwitchIcons {
     @JvmField
-    val TwitchToolWindow: Icon = IconLoader.getIcon("toolwindows/TwitchIcon.svg", IntelliTwitchIcons::class.java.classLoader)
+    val Twitch: Icon = IconLoader.getIcon("toolwindows/TwitchIcon.svg", IntelliTwitchIcons::class.java.classLoader)
 }

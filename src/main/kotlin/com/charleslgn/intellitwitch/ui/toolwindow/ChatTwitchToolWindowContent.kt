@@ -36,7 +36,7 @@ class ChatTwitchToolWindowContent(val project: Project,
         user = twitchApi.broadcasterData.login
         twitchChatAction = TwitchChatAction(this)
         val scroll = JBScrollPane(chat, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER)
-        twitchBot = TwitchBot(user, AppSettings.instance.tmiOAuthToken)
+        twitchBot = TwitchBot(user, twitchApi.oauthToken)
             .secureConnection()
             .withActionOnMessage { _: ConnectedTwitchBot, message: Message ->
                 messages.print(message)

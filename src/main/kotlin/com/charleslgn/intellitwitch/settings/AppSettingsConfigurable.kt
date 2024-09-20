@@ -31,19 +31,15 @@ class AppSettingsConfigurable: Configurable {
     }
 
     override fun isModified(): Boolean {
-        val state: AppSettings.State =
-            Objects.requireNonNull(AppSettings.instance.getState())
-        return mySettingsComponent?.tmiOauthTokenText !== state.tmiOAuthToken
+        return mySettingsComponent?.status == AppSettingsComponent.TokenStatus.GENERATED
     }
 
     override fun apply() {
-        val state: AppSettings.State = AppSettings.instance.getState()
-        state.tmiOAuthToken = mySettingsComponent?.tmiOauthTokenText
+        // nothing there the generated token will be use even if you clik on cancel
     }
 
     override fun reset() {
-        val state: AppSettings.State = AppSettings.instance.getState()
-        mySettingsComponent?.tmiOauthTokenText = state.tmiOAuthToken
+        mySettingsComponent?.status = AppSettingsComponent.TokenStatus.UNMODIFIED
     }
 
     override fun disposeUIResources() {

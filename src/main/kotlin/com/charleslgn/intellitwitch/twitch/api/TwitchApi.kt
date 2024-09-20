@@ -8,11 +8,12 @@ interface TwitchApi {
 
     val globalBadge: Collection<BadgeData>
     val myStreamers: Collection<StreamerData>
-
     val broadcasterData: BroadcasterData
-    fun broadcasterData(streamer: String): BroadcasterData
 
+    fun broadcasterData(streamer: String): BroadcasterData
     fun streamerBadge(streamer: String): Collection<BadgeData>
+
+    val oauthToken: String
 
     companion object {
         private var impl: TwitchApi? = null

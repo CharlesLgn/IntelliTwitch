@@ -24,8 +24,8 @@ internal class TwitchSocket(
 
     override fun onOpen(serverHandshake: ServerHandshake) {
         println("Websocket, Open ")
-        send("PASS oauth:" + connectionOption.token)
-        send("NICK " + connectionOption.user)
+        send("PASS oauth:${connectionOption.token}")
+        send("NICK ${connectionOption.user}")
         send("CAP REQ :twitch.tv/membership")
         send("CAP REQ :twitch.tv/tags")
         send("CAP REQ :twitch.tv/commands")

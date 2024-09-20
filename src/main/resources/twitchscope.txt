@@ -70,3 +70,5 @@ user:read:moderated_channels
 user:read:subscriptions
 user:manage:whispers
 user:write:chat
+chat:read
+chat:edit

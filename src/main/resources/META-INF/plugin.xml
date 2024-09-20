@@ -20,7 +20,7 @@
   <extensions defaultExtensionNs="com.intellij">
     <toolWindow id="TwitchChat"
                 secondary="true"
-                icon="com.charleslgn.intellitwitch.ui.icons.IntelliTwitchIcons.TwitchToolWindow"
+                icon="com.charleslgn.intellitwitch.ui.icons.IntelliTwitchIcons.Twitch"
                 anchor="right"
                 factoryClass="com.charleslgn.intellitwitch.ui.toolwindow.ChatTwitchToolWindowFactory"/>
     <applicationService
