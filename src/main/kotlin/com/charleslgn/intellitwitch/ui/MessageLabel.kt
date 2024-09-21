@@ -3,7 +3,15 @@ package com.charleslgn.intellitwitch.ui
 import com.charleslgn.intellitwitch.twitch.api.TwitchApi
 import com.charleslgn.intellitwitch.twitch.message.Message
 import com.charleslgn.intellitwitch.twitch.message.Message.EmoteMessage
+import com.intellij.ide.BrowserUtil
+import com.intellij.ui.JBColor
+import com.intellij.ui.components.JBLabel
+import java.awt.Font
+import java.awt.event.MouseAdapter
+import java.awt.event.MouseEvent
+import java.awt.font.TextAttribute
 import java.net.URI
+import java.util.HashMap
 import javax.swing.ImageIcon
 import javax.swing.JLabel
 
@@ -39,10 +47,44 @@ private fun Message.addEachWordAsALabel(begin: Int,
 private data class DataDelimiter(val begin:Int, val end:Int, val data:Any) {
     fun jlabel(emoteMap:Map<String, String>): JLabel {
         if (data is String) {
-            return JLabel(data)
+            return data.jlabel()
         } else if (data is EmoteMessage) {
-            return JLabel(ImageIcon(emoteMap[data.id]?.let { URI(it).toURL() }, data.id))
+            return JBLabel(ImageIcon(emoteMap[data.id]?.let { URI(it).toURL() }, data.id))
         }
         throw IllegalArgumentException()
     }
+
+    private fun String.jlabel():JLabel {
+        val label = JBLabel(this)
+        if (isUserAt()) {
+            label.font = Font(label.font.name, Font.BOLD, label.font.size)
+            label.background = JBColor.MAGENTA
+        } else if (isHtmlLink()) {
+            label.font = Font(label.font.name, Font.ITALIC, label.font.size)
+            val attributes: MutableMap<TextAttribute, Any> = HashMap(label.font.attributes)
+            attributes[TextAttribute.UNDERLINE] = TextAttribute.UNDERLINE_ON
+            label.font = label.font.deriveFont(attributes)
+            label.foreground = JBColor.BLUE
+            label.addMouseListener(LinkClickListener(this))
+        }
+        return label
+    }
+
+    private class LinkClickListener(val link: String) : MouseAdapter() {
+        override fun mousePressed(e: MouseEvent?) {
+            var fullLink = link
+            if (!link.startsWith("www.")) {
+                fullLink = "www.$fullLink"
+            }
+            if (!link.startsWith("http://") && !link.startsWith("https://")) {
+                fullLink = "https://$fullLink"
+            }
+            BrowserUtil.open(fullLink)
+        }
+    }
+
+    private fun String.isUserAt(): Boolean = "@.*".toRegex().matches(trim())
+
+    private fun String.isHtmlLink(): Boolean =
+        "(?:https?://.)?(?:www\\.)?[-a-zA-Z0-9@%._+~#=]{2,256}\\.[a-z]{2,6}\\b[-a-zA-Z0-9@:%_+.~#?&/=]*".toRegex().matches(trim())
 }
