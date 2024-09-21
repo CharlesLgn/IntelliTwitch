@@ -35,3 +35,6 @@ you can now run it via `graddle`
 - Moderate chat (delete message/ban user/...)
 - ✅ Show user info in chat (badge/color/...)
 - ✅ Support emote
+
+## What it looks like
+![capture](./doc/capture.png)
