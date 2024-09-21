@@ -31,7 +31,9 @@ class MessagePanel(val chat: JComponent,
         controlChatLimits()
         val iconLabel = iconLabel(message)
         val userLabel = JLabel("${message.userName}: ")
-        userLabel.foreground = Color.decode(message.color)
+        if (message.color.isNotEmpty()) {
+            userLabel.foreground = Color.decode(message.color)
+        }
         userLabel.font = Font(userLabel.font.name, Font.BOLD, userLabel.font.size)
 
         val messageContent = message.labels(twitchApi)
