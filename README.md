@@ -34,4 +34,4 @@ you can now run it via `graddle`
 - ✅ Answer a chat message
 - Moderate chat (delete message/ban user/...)
 - ✅ Show user info in chat (badge/color/...)
-- Show chat emote
+- ✅ Support emote

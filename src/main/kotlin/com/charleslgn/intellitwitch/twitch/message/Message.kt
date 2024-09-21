@@ -15,7 +15,8 @@ class Message(
     val messageContent: String,
     val messageType: MessageType,
     val color: String,
-    val chatBadges: List<String>
+    val chatBadges: List<String>,
+    val emotes:List<EmoteMessage> = listOf(),
 ) {
 
     /**
@@ -28,7 +29,8 @@ class Message(
         messageContent  = findMessageContent(socketMessage),
         messageType     = findTypeMessage(socketMessage),
         color           = findColor(socketMessage),
-        chatBadges      = findBadges(socketMessage)
+        chatBadges      = findBadges(socketMessage),
+        emotes          = findEmotes(socketMessage),
     )
 
     companion object {
@@ -72,9 +74,30 @@ class Message(
             .first { m: String -> m.startsWith("badges=") }
             .replace("badges=", "")
             .split(",")
+
+        fun findEmotes(socketMessage: String): List<EmoteMessage> {
+            val emotes = socketMessage.split(";")
+                .first { m: String -> m.startsWith("emotes=") }
+                .replace("emotes=", "")
+            return if (emotes.isNotEmpty()) { emotes.split("/").map { toEmote(it) } } else { listOf() }
+        }
+
+        private fun toEmote(emoteValue: String): EmoteMessage {
+            val data = emoteValue.split(":")
+            val delimiters = data[1].split(",").map { EmoteDelimiter(it) }
+            return EmoteMessage(data[0], delimiters)
+        }
     }
 
     override fun toString(): String {
         return "$id | $streamerName | $userName | $messageContent"
+    }
+
+    data class EmoteMessage(val id:String, val delimiters:List<EmoteDelimiter>)
+    data class EmoteDelimiter(val begin:Int, val end:Int) {
+        constructor(data:String):this(
+            data.split("-")[0].toInt(),
+            data.split("-")[1].toInt()
+        )
     }
 }

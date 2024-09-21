@@ -6,14 +6,15 @@ import com.charleslgn.intellitwitch.twitch.api.TwitchApi
 import com.charleslgn.intellitwitch.twitch.message.Message
 import com.charleslgn.intellitwitch.ui.MultipleImageIcon
 import com.charleslgn.intellitwitch.ui.icons.IntelliTwitchIcons
+import com.charleslgn.intellitwitch.ui.labels
 import com.intellij.openapi.ui.JBMenuItem
 import com.intellij.openapi.ui.JBPopupMenu
+import com.intellij.vcs.log.ui.frame.WrappedFlowLayout
 import com.jetbrains.rd.util.AtomicInteger
+import java.awt.Color
+import java.awt.Font
 import java.net.URI
-import javax.swing.ImageIcon
-import javax.swing.JComponent
-import javax.swing.JLabel
-import javax.swing.JPopupMenu
+import javax.swing.*
 
 
 class MessagePanel(val chat: JComponent,
@@ -28,13 +29,33 @@ class MessagePanel(val chat: JComponent,
 
     fun print(message: Message) {
         controlChatLimits()
-        val userLabel = """<span style="color:${message.color}; font-weight:bold;">${message.userName}:&nbsp;</span>"""
-        val messageContent = "<span>${message.messageContent}</span>"
-        val mes = JLabel("<html>$userLabel$messageContent</html>")
-        setIconLabel(mes, message)
+        val iconLabel = iconLabel(message)
+        val userLabel = JLabel("${message.userName}: ")
+        userLabel.foreground = Color.decode(message.color)
+        userLabel.font = Font(userLabel.font.name, Font.BOLD, userLabel.font.size)
+
+        val messageContent = message.labels(twitchApi)
+        val mes = JPanel(WrappedFlowLayout(5, 0))
+        mes.add(iconLabel)
+        mes.add(userLabel)
+        messageContent.forEach(mes::add)
         mes.componentPopupMenu = popupMenu(message)
         chat.add(mes)
         chat.repaint()
+    }
+
+    private fun iconLabel(message: Message): JLabel {
+        if (message.chatBadges.isNotEmpty()) {
+            val badges = ArrayList<BadgeVersion>()
+            badges.addAll(findBadges(message, twitchApi.globalBadge))
+            badges.addAll(findBadges(message, streamerBadges))
+            if (badges.isNotEmpty()) {
+                return JLabel(MultipleImageIcon(
+                    badges.map { ImageIcon(URI(it.imageUrl1x).toURL(), it.title) }
+                ))
+            }
+        }
+        return JLabel("")
     }
 
     private fun popupMenu(message: Message): JPopupMenu {
@@ -50,19 +71,6 @@ class MessagePanel(val chat: JComponent,
             messageStack.incrementAndGet()
         } else {
             chat.remove(0)
-        }
-    }
-
-    private fun setIconLabel(label: JLabel, message: Message) {
-        if (message.chatBadges.isNotEmpty()) {
-            val badges = ArrayList<BadgeVersion>()
-            badges.addAll(findBadges(message, twitchApi.globalBadge))
-            badges.addAll(findBadges(message, streamerBadges))
-            if (badges.isNotEmpty()) {
-                label.icon = MultipleImageIcon(
-                    badges.map { ImageIcon(URI(it.imageUrl1x).toURL(), it.title) }
-                )
-            }
         }
     }
 

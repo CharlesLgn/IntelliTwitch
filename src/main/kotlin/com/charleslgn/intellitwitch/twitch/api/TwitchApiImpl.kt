@@ -62,6 +62,17 @@ class TwitchApiImpl(
     override fun broadcasterData(streamer: String): BroadcasterData =
         fetchFirst<BroadcasterData>("https://api.twitch.tv/helix/users?login=$streamer")
 
+    override fun emotes(ids: List<String>): Map<String, String> {
+        if (ids.isEmpty()) {
+            return mapOf()
+        }
+        val map: MutableMap<String, String> = HashMap()
+        ids.forEach { emote -> map[emote] = toUrl(emote) }
+        return map
+    }
+
+    private fun toUrl(emote:String) = "https://static-cdn.jtvnw.net/emoticons/v2/$emote/default/dark/1.0"
+
     private fun authorize(params: MutableList<NameValuePair>) {
         params.add(BasicNameValuePair("client_id", client.id))
         params.add(BasicNameValuePair("client_secret", client.secret))

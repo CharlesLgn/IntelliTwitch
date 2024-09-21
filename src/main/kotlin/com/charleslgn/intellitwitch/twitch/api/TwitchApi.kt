@@ -15,6 +15,8 @@ interface TwitchApi {
 
     val oauthToken: String
 
+    fun emotes(ids:List<String>): Map<String, String>
+
     companion object {
         private var impl: TwitchApi? = null
 
