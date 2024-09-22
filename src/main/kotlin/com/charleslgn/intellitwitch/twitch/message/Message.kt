@@ -16,21 +16,25 @@ class Message(
     val messageType: MessageType,
     val color: String,
     val chatBadges: List<String>,
-    val emotes:List<EmoteMessage> = listOf(),
+    val emotes: List<EmoteMessage> = listOf(),
+    val moderator: Boolean,
+    val vip: Boolean,
 ) {
 
     /**
      * @param socketMessage the message sent by twitch by socket.
      */
     constructor (socketMessage: String) : this(
-        id              = findMessageId(socketMessage),
-        userName        = findUserName(socketMessage),
-        streamerName    = findStreamerName(socketMessage),
-        messageContent  = findMessageContent(socketMessage),
-        messageType     = findTypeMessage(socketMessage),
-        color           = findColor(socketMessage),
-        chatBadges      = findBadges(socketMessage),
-        emotes          = findEmotes(socketMessage),
+        id = findMessageId(socketMessage),
+        userName = findUserName(socketMessage),
+        streamerName = findStreamerName(socketMessage),
+        messageContent = findMessageContent(socketMessage),
+        messageType = findTypeMessage(socketMessage),
+        color = findColor(socketMessage),
+        chatBadges = findBadges(socketMessage),
+        emotes = findEmotes(socketMessage),
+        moderator = isModerator(socketMessage),
+        vip = isVip(socketMessage),
     )
 
     companion object {
@@ -70,6 +74,14 @@ class Message(
             .first { m: String -> m.startsWith("display-name=") }
             .replace("display-name=", "")
 
+        private fun isModerator(socketMessage: String): Boolean = socketMessage.split(";".toRegex())
+            .first { m: String -> m.startsWith("mod=") }
+            .replace("mod=", "") == "1"
+
+        private fun isVip(socketMessage: String): Boolean = socketMessage.split(";".toRegex())
+            .firstOrNull { m: String -> m.startsWith("vip=") }
+            ?.replace("vip=", "") == "1"
+
         fun findBadges(socketMessage: String): List<String> = socketMessage.split(";")
             .first { m: String -> m.startsWith("badges=") }
             .replace("badges=", "")
@@ -79,7 +91,11 @@ class Message(
             val emotes = socketMessage.split(";")
                 .first { m: String -> m.startsWith("emotes=") }
                 .replace("emotes=", "")
-            return if (emotes.isNotEmpty()) { emotes.split("/").map { toEmote(it) } } else { listOf() }
+            return if (emotes.isNotEmpty()) {
+                emotes.split("/").map { toEmote(it) }
+            } else {
+                listOf()
+            }
         }
 
         private fun toEmote(emoteValue: String): EmoteMessage {
@@ -93,9 +109,9 @@ class Message(
         return "$id | $streamerName | $userName | $messageContent"
     }
 
-    data class EmoteMessage(val id:String, val delimiters:List<EmoteDelimiter>)
-    data class EmoteDelimiter(val begin:Int, val end:Int) {
-        constructor(data:String):this(
+    data class EmoteMessage(val id: String, val delimiters: List<EmoteDelimiter>)
+    data class EmoteDelimiter(val begin: Int, val end: Int) {
+        constructor(data: String) : this(
             data.split("-")[0].toInt(),
             data.split("-")[1].toInt()
         )

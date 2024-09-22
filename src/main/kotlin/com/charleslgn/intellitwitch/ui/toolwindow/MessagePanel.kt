@@ -80,7 +80,7 @@ class MessagePanel(
     }
 
     private fun moderationMenu(message: Message): JMenu? {
-        if (twitchApi.moderatedChannel(message.streamerName)) {
+        if (message.userName.lowercase() != message.streamerName.lowercase() && twitchApi.moderatedChannel(message.streamerName)) {
             val moderation = JBMenu()
             moderation.text = "Moderation"
             moderation.icon = IntelliTwitchIcons.Sword
@@ -96,18 +96,24 @@ class MessagePanel(
             moderation.add(menuItem("Timeout user", IntelliTwitchIcons.Timeout) {
                 twitchBot.command(ChatTwitchToolWindowContent.connectedStreamer, Commands.timeout(message.userName, 60))
             })
-            moderation.add(menuItem("Add as vip", IntelliTwitchIcons.Vip) {
-                twitchBot.command(ChatTwitchToolWindowContent.connectedStreamer, Commands.addVip(message.userName))
-            })
-            moderation.add(menuItem("Remove as vip", IntelliTwitchIcons.Vip) {
-                twitchBot.command(ChatTwitchToolWindowContent.connectedStreamer, Commands.removeVip(message.userName))
-            })
-            moderation.add(menuItem("Add as moderator", IntelliTwitchIcons.Sword) {
-                twitchBot.command(ChatTwitchToolWindowContent.connectedStreamer, Commands.addModerator(message.userName))
-            })
-            moderation.add(menuItem("Remove as moderator", IntelliTwitchIcons.Sword) {
-                twitchBot.command(ChatTwitchToolWindowContent.connectedStreamer, Commands.removeModerator(message.userName))
-            })
+            if (message.vip) {
+                moderation.add(menuItem("Remove as vip", IntelliTwitchIcons.Vip) {
+                    twitchBot.command(ChatTwitchToolWindowContent.connectedStreamer, Commands.removeVip(message.userName))
+                })
+            } else {
+                moderation.add(menuItem("Add as vip", IntelliTwitchIcons.Vip) {
+                    twitchBot.command(ChatTwitchToolWindowContent.connectedStreamer, Commands.addVip(message.userName))
+                })
+            }
+            if (message.moderator) {
+                moderation.add(menuItem("Add as moderator", IntelliTwitchIcons.Sword) {
+                    twitchBot.command(ChatTwitchToolWindowContent.connectedStreamer, Commands.addModerator(message.userName))
+                })
+            } else {
+                moderation.add(menuItem("Remove as moderator", IntelliTwitchIcons.Sword) {
+                    twitchBot.command(ChatTwitchToolWindowContent.connectedStreamer, Commands.removeModerator(message.userName))
+                })
+            }
             return moderation
         }
         return null
