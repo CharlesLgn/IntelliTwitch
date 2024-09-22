@@ -91,7 +91,7 @@ class MessagePanel(
             moderation.add(menuItem("Block user") {
                 twitchBot.command(ChatTwitchToolWindowContent.connectedStreamer, Commands.block(message.userName))
             })
-            moderation.add(menuItem("timeout user") {
+            moderation.add(menuItem("Timeout user") {
                 twitchBot.command(ChatTwitchToolWindowContent.connectedStreamer, Commands.timeout(message.userName, 60))
             })
             moderation.add(menuItem("Add as vip") {
