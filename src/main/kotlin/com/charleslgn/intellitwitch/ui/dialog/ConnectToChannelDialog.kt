@@ -52,10 +52,7 @@ class ConnectToChannelDialog : InputDialog(
         val image = ImageIcon(imageUrl).image.getScaledInstance(32, 32, Image.SCALE_DEFAULT)
         val imageIcon = ImageIcon(image)
         val button = JButton(data.userName)
-        button.addActionListener {
-            streamToGo = data.userName
-            close(0)
-        }
+        button.addActionListener { connect(data.userName) }
         val viewerNumber = JPanel(HorizontalLayout(5))
         val liveLabel = JBLabel(" ● ")
         liveLabel.foreground = JBColor.RED
@@ -72,12 +69,17 @@ class ConnectToChannelDialog : InputDialog(
     private fun customStream(): JComponent {
         val text = JTextField()
         val button = JButton("connect")
-        button.addActionListener { streamToGo = text.text }
-        text.addKeyboardAction(listOf(KeyStroke.getKeyStroke(VK_ENTER.toChar()))) { streamToGo = text.text }
+        button.addActionListener { connect(text.text) }
+        text.addKeyboardAction(listOf(KeyStroke.getKeyStroke(VK_ENTER.toChar()))) { connect(text.text) }
         val panel = JPanel(BorderLayout())
         panel.add(text, BorderLayout.CENTER)
         panel.add(button, BorderLayout.EAST)
         return panel
+    }
+
+    private fun connect(streamToGo: String) {
+        this.streamToGo = streamToGo
+        close(0)
     }
 
     override fun createActions(): Array<Action> {
