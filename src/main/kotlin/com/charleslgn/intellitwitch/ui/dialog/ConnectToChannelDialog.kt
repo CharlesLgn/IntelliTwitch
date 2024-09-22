@@ -49,7 +49,7 @@ class ConnectToChannelDialog : InputDialog(
 
     private fun streamerPanel(data: StreamerData): JComponent {
         val imageUrl = URI(TwitchApi.instance.broadcasterData(data.userName).onScaleProfileImageUrl).toURL()
-        val image = ImageIcon(imageUrl).image.getScaledInstance(32, 32, Image.SCALE_DEFAULT)
+        val image = ImageIcon(imageUrl).image.getScaledInstance(32, 32, Image.SCALE_AREA_AVERAGING)
         val imageIcon = ImageIcon(image)
         val button = JButton(data.userName)
         button.addActionListener { connect(data.userName) }

@@ -5,6 +5,7 @@ import com.beust.klaxon.Json
 import com.beust.klaxon.JsonValue
 import com.beust.klaxon.Klaxon
 import com.charleslgn.intellitwitch.settings.AppSettings
+import com.jetbrains.rd.util.collections.SynchronizedMap
 import org.apache.http.HttpResponse
 import org.apache.http.NameValuePair
 import org.apache.http.client.HttpClient
@@ -25,6 +26,7 @@ class TwitchApiImpl(
     private var refreshToken: String = ""
 
     private var badgesGlobal: Collection<BadgeData>? = null
+    private var broadcastersData: MutableMap<String, BroadcasterData> = SynchronizedMap()
 
     override fun connect(code: String, redirectUri: String) {
         val params: MutableList<NameValuePair> = ArrayList()
@@ -68,8 +70,12 @@ class TwitchApiImpl(
     override val broadcasterData: BroadcasterData
         get() = fetchFirst<BroadcasterData>("https://api.twitch.tv/helix/users")
 
-    override fun broadcasterData(streamer: String): BroadcasterData =
-        fetchFirst<BroadcasterData>("https://api.twitch.tv/helix/users?login=$streamer")
+    override fun broadcasterData(streamer: String): BroadcasterData {
+        if (broadcastersData[streamer] == null) {
+            broadcastersData[streamer] = fetchFirst<BroadcasterData>("https://api.twitch.tv/helix/users?login=$streamer")
+        }
+        return broadcastersData[streamer] ?: throw IllegalAccessError()
+    }
 
     override fun emotes(ids: List<String>): Map<String, String> {
         if (ids.isEmpty()) {
