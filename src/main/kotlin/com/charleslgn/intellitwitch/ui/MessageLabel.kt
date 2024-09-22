@@ -50,7 +50,7 @@ private data class DataDelimiter(val begin: Int, val end: Int, val data: Any) {
         if (data is String) {
             return data.jlabel()
         } else if (data is EmoteMessage) {
-            return JBLabel(ImageIcon(emoteMap[data.id]?.let { URI(it).toURL() }, data.id))
+            JBLabel(ImageIcon(emoteMap[data.id]?.let { URI(it).toURL() }, data.id))
         }
         throw IllegalArgumentException()
     }

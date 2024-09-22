@@ -72,7 +72,7 @@ class TwitchApiImpl(
                 cachedModeratedChannelData = fetchAll<ModeratedChannelData>("https://api.twitch.tv/helix/moderation/channels?user_id=${broadcasterData.id}")
             }
         }
-        return streamerName == broadcasterData.login || (cachedModeratedChannelData?.any { streamerName == it.name } ?: false)
+        return streamerName == broadcasterData.login || (cachedModeratedChannelData?.any { streamerName == it.login } ?: false)
     }
 
     override val myStreamers: Collection<StreamerData>

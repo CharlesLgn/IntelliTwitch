@@ -1,5 +1,6 @@
 package com.charleslgn.intellitwitch.ui.toolwindow
 
+import com.charleslgn.intellitwitch.settings.AppSettings
 import com.charleslgn.intellitwitch.twitch.api.BadgeData
 import com.charleslgn.intellitwitch.twitch.api.BadgeVersion
 import com.charleslgn.intellitwitch.twitch.api.TwitchApi
@@ -25,8 +26,8 @@ import javax.swing.*
 
 class MessagePanel(
     val chat: JComponent,
-    private var messageStackLimit: Int = 500,
-    private val twitchApi: TwitchApi = TwitchApi.instance
+    private val twitchApi: TwitchApi = TwitchApi.instance,
+    private val settings: AppSettings = AppSettings.instance,
 ) {
 
     lateinit var form: MessageFormPanel
@@ -98,7 +99,10 @@ class MessagePanel(
             })
             if (message.vip) {
                 moderation.add(menuItem("Remove as vip", IntelliTwitchIcons.Vip) {
-                    twitchBot.command(ChatTwitchToolWindowContent.connectedStreamer, Commands.removeVip(message.userName))
+                    twitchBot.command(
+                        ChatTwitchToolWindowContent.connectedStreamer,
+                        Commands.removeVip(message.userName)
+                    )
                 })
             } else {
                 moderation.add(menuItem("Add as vip", IntelliTwitchIcons.Vip) {
@@ -106,12 +110,18 @@ class MessagePanel(
                 })
             }
             if (message.moderator) {
-                moderation.add(menuItem("Add as moderator", IntelliTwitchIcons.Sword) {
-                    twitchBot.command(ChatTwitchToolWindowContent.connectedStreamer, Commands.addModerator(message.userName))
+                moderation.add(menuItem("Remove as moderator", IntelliTwitchIcons.Sword) {
+                    twitchBot.command(
+                        ChatTwitchToolWindowContent.connectedStreamer,
+                        Commands.removeModerator(message.userName)
+                    )
                 })
             } else {
-                moderation.add(menuItem("Remove as moderator", IntelliTwitchIcons.Sword) {
-                    twitchBot.command(ChatTwitchToolWindowContent.connectedStreamer, Commands.removeModerator(message.userName))
+                moderation.add(menuItem("Add as moderator", IntelliTwitchIcons.Sword) {
+                    twitchBot.command(
+                        ChatTwitchToolWindowContent.connectedStreamer,
+                        Commands.addModerator(message.userName)
+                    )
                 })
             }
             return moderation
@@ -131,7 +141,10 @@ class MessagePanel(
                 twitchBot.command(ChatTwitchToolWindowContent.connectedStreamer, Commands.emoteOnlyOff())
             })
             moderation.add(menuItem("Enable follower only") {
-                twitchBot.command(ChatTwitchToolWindowContent.connectedStreamer, Commands.followers(TimeUnit(30, TimeUnit.Unit.DAYS)))
+                twitchBot.command(
+                    ChatTwitchToolWindowContent.connectedStreamer,
+                    Commands.followers(TimeUnit(30, TimeUnit.Unit.DAYS))
+                )
             })
             moderation.add(menuItem("Disable follower only") {
                 twitchBot.command(ChatTwitchToolWindowContent.connectedStreamer, Commands.followersOff())
@@ -167,11 +180,11 @@ class MessagePanel(
     }
 
     private fun controlChatLimits() {
-        if (messageStack.get() < messageStackLimit) {
-            messageStack.incrementAndGet()
-        } else {
+        while (messageStack.get() >= settings.chatMessagesLimits) {
             chat.remove(0)
+            messageStack.decrementAndGet()
         }
+        messageStack.incrementAndGet()
     }
 
     private fun findBadges(message: Message, badges: Collection<BadgeData>) = message.chatBadges.mapNotNull { badge ->

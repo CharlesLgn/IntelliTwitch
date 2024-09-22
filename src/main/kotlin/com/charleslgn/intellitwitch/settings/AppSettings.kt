@@ -4,6 +4,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
+import org.jetbrains.annotations.NonNls
 
 @State(
     name = "com.charleslgn.intellitwitch.settings.AppSettings",
@@ -20,6 +21,7 @@ class AppSettings: PersistentStateComponent<AppSettings.State> {
     }
 
     val refreshTwitchToken: String? get() = state.refreshTwitchToken
+    val chatMessagesLimits: Int get() = state.chatMessagesLimits
 
     companion object {
         val instance: AppSettings
@@ -28,5 +30,7 @@ class AppSettings: PersistentStateComponent<AppSettings.State> {
 
     class State {
         var refreshTwitchToken: String? = null
+        @NonNls
+        var chatMessagesLimits: Int = 500
     }
 }
