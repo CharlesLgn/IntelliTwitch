@@ -124,7 +124,7 @@ object Commands {
      * @param message the message to delete from the chat
      * @return the delete-message command
      */
-    fun delete(message: Message): Command = DeleteCommand(message.id)
+    fun delete(message: Message): Command = delete(message.id)
 
     /**
      * This command will delete the target message from the chat.

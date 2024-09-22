@@ -3,25 +3,33 @@ package com.charleslgn.intellitwitch.ui.toolwindow
 import com.charleslgn.intellitwitch.twitch.api.BadgeData
 import com.charleslgn.intellitwitch.twitch.api.BadgeVersion
 import com.charleslgn.intellitwitch.twitch.api.TwitchApi
+import com.charleslgn.intellitwitch.twitch.command.Commands
+import com.charleslgn.intellitwitch.twitch.command.type.TimeUnit
 import com.charleslgn.intellitwitch.twitch.message.Message
+import com.charleslgn.intellitwitch.twitch.socket.ConnectedTwitchBot
 import com.charleslgn.intellitwitch.ui.MultipleImageIcon
 import com.charleslgn.intellitwitch.ui.icons.IntelliTwitchIcons
 import com.charleslgn.intellitwitch.ui.labels
 import com.intellij.openapi.ui.JBMenuItem
 import com.intellij.openapi.ui.JBPopupMenu
+import com.intellij.ui.components.JBMenu
 import com.intellij.vcs.log.ui.frame.WrappedFlowLayout
 import com.jetbrains.rd.util.AtomicInteger
 import java.awt.Color
 import java.awt.Font
+import java.awt.event.ActionListener
 import java.net.URI
 import javax.swing.*
 
 
-class MessagePanel(val chat: JComponent,
-                   private var messageStackLimit: Int = 500,
-                   private val twitchApi: TwitchApi = TwitchApi.instance) {
+class MessagePanel(
+    val chat: JComponent,
+    private var messageStackLimit: Int = 500,
+    private val twitchApi: TwitchApi = TwitchApi.instance
+) {
 
     lateinit var form: MessageFormPanel
+    lateinit var twitchBot: ConnectedTwitchBot
 
     private val messageStack = AtomicInteger(0)
 
@@ -65,7 +73,61 @@ class MessagePanel(val chat: JComponent,
         val answer = JBMenuItem("Answer", IntelliTwitchIcons.Answer)
         answer.addActionListener { form.answerTo = message }
         popup.add(answer)
+        moderationMenu(message)?.let { popup.add(it) }
         return popup
+    }
+
+    private fun moderationMenu(message: Message): JMenu? {
+        if (twitchApi.moderatedChannel(message.streamerName)) {
+            val moderation = JBMenu()
+            moderation.text = "Moderation"
+            moderation.icon = IntelliTwitchIcons.Sword
+            moderation.add(menuItem("Delete message") {
+                twitchBot.command(ChatTwitchToolWindowContent.connectedStreamer, Commands.delete(message))
+            })
+            moderation.add(menuItem("Ban user") {
+                twitchBot.command(ChatTwitchToolWindowContent.connectedStreamer, Commands.ban(message.userName))
+            })
+            moderation.add(menuItem("Block user") {
+                twitchBot.command(ChatTwitchToolWindowContent.connectedStreamer, Commands.block(message.userName))
+            })
+            moderation.add(menuItem("timeout user") {
+                twitchBot.command(ChatTwitchToolWindowContent.connectedStreamer, Commands.timeout(message.userName, 60))
+            })
+            moderation.add(menuItem("Add as vip") {
+                twitchBot.command(ChatTwitchToolWindowContent.connectedStreamer, Commands.addVip(message.userName))
+            })
+            moderation.add(menuItem("Remove as vip") {
+                twitchBot.command(ChatTwitchToolWindowContent.connectedStreamer, Commands.removeVip(message.userName))
+            })
+            moderation.addSeparator()
+            moderation.add(menuItem("Enable emote only") {
+                twitchBot.command(ChatTwitchToolWindowContent.connectedStreamer, Commands.emoteOnly())
+            })
+            moderation.add(menuItem("Disable emote only off") {
+                twitchBot.command(ChatTwitchToolWindowContent.connectedStreamer, Commands.emoteOnlyOff())
+            })
+            moderation.add(menuItem("Enable follower only") {
+                twitchBot.command(ChatTwitchToolWindowContent.connectedStreamer, Commands.followers(TimeUnit(30, TimeUnit.Unit.DAYS)))
+            })
+            moderation.add(menuItem("Disable follower only") {
+                twitchBot.command(ChatTwitchToolWindowContent.connectedStreamer, Commands.followersOff())
+            })
+            moderation.add(menuItem("Enable unique chat") {
+                twitchBot.command(ChatTwitchToolWindowContent.connectedStreamer, Commands.uniqueChat())
+            })
+            moderation.add(menuItem("Disable unique chat") {
+                twitchBot.command(ChatTwitchToolWindowContent.connectedStreamer, Commands.uniqueChatOff())
+            })
+            return moderation
+        }
+        return null
+    }
+
+    private fun menuItem(title: String, l: ActionListener): JMenuItem {
+        val item = JBMenuItem(title)
+        item.addActionListener(l)
+        return item
     }
 
     private fun controlChatLimits() {

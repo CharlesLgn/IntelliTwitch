@@ -45,6 +45,7 @@ class ChatTwitchToolWindowContent(val project: Project,
             }
             .connect()
         val form = MessageFormPanel(twitchBot, messages)
+        messages.twitchBot = twitchBot
         val c = JPanel(BorderLayout())
         c.add(scroll, BorderLayout.CENTER)
         c.add(form.panel, BorderLayout.SOUTH)

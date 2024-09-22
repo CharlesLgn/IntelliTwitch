@@ -13,3 +13,12 @@ data class BroadcasterData(
     val onScaleProfileImageUrl: String
        get() = profileImageUrl.replace("300x300", "70x70")
 }
+
+data class ModeratedChannelData(
+    @Json(name = "broadcaster_id")
+    val id: String,
+    @Json(name = "broadcaster_login")
+    val login: String,
+    @Json(name = "broadcaster_name")
+    val name: String,
+)

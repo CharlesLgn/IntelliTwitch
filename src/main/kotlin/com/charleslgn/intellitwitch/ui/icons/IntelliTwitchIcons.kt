@@ -10,4 +10,5 @@ import javax.swing.Icon
 object IntelliTwitchIcons {
     @JvmField val Twitch: Icon = IconLoader.getIcon("toolwindows/TwitchIcon.svg", IntelliTwitchIcons::class.java.classLoader)
     @JvmField val Answer: Icon = IconLoader.getIcon("toolwindows/answer.svg", IntelliTwitchIcons::class.java.classLoader)
+    @JvmField val Sword: Icon = IconLoader.getIcon("toolwindows/sword.svg", IntelliTwitchIcons::class.java.classLoader)
 }

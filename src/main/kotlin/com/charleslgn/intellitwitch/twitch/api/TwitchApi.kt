@@ -9,6 +9,7 @@ interface TwitchApi {
     val globalBadge: Collection<BadgeData>
     val myStreamers: Collection<StreamerData>
     val broadcasterData: BroadcasterData
+    fun moderatedChannel(streamerName:String): Boolean
 
     fun broadcasterData(streamer: String): BroadcasterData
     fun streamerBadge(streamer: String): Collection<BadgeData>

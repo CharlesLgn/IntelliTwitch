@@ -25,6 +25,8 @@ class TwitchApiImpl(
     override var oauthToken: String = ""
     private var refreshToken: String = ""
 
+    private var cachedBroadcasterData: BroadcasterData? = null
+    private var cachedModeratedChannelData: Collection<ModeratedChannelData>? = null
     private var badgesGlobal: Collection<BadgeData>? = null
     private var broadcastersData: MutableMap<String, BroadcasterData> = SynchronizedMap()
 
@@ -64,15 +66,32 @@ class TwitchApiImpl(
         return fetchAll<BadgeData>("https://api.twitch.tv/helix/chat/badges?broadcaster_id=${data.id}")
     }
 
+    override fun moderatedChannel(streamerName: String): Boolean {
+        if (cachedModeratedChannelData == null) {
+            synchronized(this) {
+                cachedModeratedChannelData = fetchAll<ModeratedChannelData>("https://api.twitch.tv/helix/moderation/channels?user_id=${broadcasterData.id}")
+            }
+        }
+        return streamerName == broadcasterData.login || (cachedModeratedChannelData?.any { streamerName == it.name } ?: false)
+    }
+
     override val myStreamers: Collection<StreamerData>
         get() = fetchAll<StreamerData>("https://api.twitch.tv/helix/streams/followed?user_id=${broadcasterData.id}").sorted()
 
     override val broadcasterData: BroadcasterData
-        get() = fetchFirst<BroadcasterData>("https://api.twitch.tv/helix/users")
+        get() {
+            if (cachedBroadcasterData == null) {
+                synchronized(this) {
+                    cachedBroadcasterData = fetchFirst<BroadcasterData>("https://api.twitch.tv/helix/users")
+                }
+            }
+            return cachedBroadcasterData!!
+        }
 
     override fun broadcasterData(streamer: String): BroadcasterData {
         if (broadcastersData[streamer] == null) {
-            broadcastersData[streamer] = fetchFirst<BroadcasterData>("https://api.twitch.tv/helix/users?login=$streamer")
+            broadcastersData[streamer] =
+                fetchFirst<BroadcasterData>("https://api.twitch.tv/helix/users?login=$streamer")
         }
         return broadcastersData[streamer] ?: throw IllegalAccessError()
     }
