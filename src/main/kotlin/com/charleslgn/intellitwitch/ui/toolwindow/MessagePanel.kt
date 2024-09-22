@@ -10,6 +10,7 @@ import com.charleslgn.intellitwitch.twitch.socket.ConnectedTwitchBot
 import com.charleslgn.intellitwitch.ui.MultipleImageIcon
 import com.charleslgn.intellitwitch.ui.icons.IntelliTwitchIcons
 import com.charleslgn.intellitwitch.ui.labels
+import com.intellij.icons.AllIcons
 import com.intellij.openapi.ui.JBMenuItem
 import com.intellij.openapi.ui.JBPopupMenu
 import com.intellij.ui.components.JBMenu
@@ -74,6 +75,7 @@ class MessagePanel(
         answer.addActionListener { form.answerTo = message }
         popup.add(answer)
         moderationMenu(message)?.let { popup.add(it) }
+        chatConfigurationMenu(message)?.let { popup.add(it) }
         return popup
     }
 
@@ -82,29 +84,44 @@ class MessagePanel(
             val moderation = JBMenu()
             moderation.text = "Moderation"
             moderation.icon = IntelliTwitchIcons.Sword
-            moderation.add(menuItem("Delete message") {
+            moderation.add(menuItem("Delete message", AllIcons.Actions.Cancel) {
                 twitchBot.command(ChatTwitchToolWindowContent.connectedStreamer, Commands.delete(message))
             })
-            moderation.add(menuItem("Ban user") {
+            moderation.add(menuItem("Ban user", IntelliTwitchIcons.Ban) {
                 twitchBot.command(ChatTwitchToolWindowContent.connectedStreamer, Commands.ban(message.userName))
             })
             moderation.add(menuItem("Block user") {
                 twitchBot.command(ChatTwitchToolWindowContent.connectedStreamer, Commands.block(message.userName))
             })
-            moderation.add(menuItem("Timeout user") {
+            moderation.add(menuItem("Timeout user", IntelliTwitchIcons.Timeout) {
                 twitchBot.command(ChatTwitchToolWindowContent.connectedStreamer, Commands.timeout(message.userName, 60))
             })
-            moderation.add(menuItem("Add as vip") {
+            moderation.add(menuItem("Add as vip", IntelliTwitchIcons.Vip) {
                 twitchBot.command(ChatTwitchToolWindowContent.connectedStreamer, Commands.addVip(message.userName))
             })
-            moderation.add(menuItem("Remove as vip") {
+            moderation.add(menuItem("Remove as vip", IntelliTwitchIcons.Vip) {
                 twitchBot.command(ChatTwitchToolWindowContent.connectedStreamer, Commands.removeVip(message.userName))
             })
-            moderation.addSeparator()
-            moderation.add(menuItem("Enable emote only") {
+            moderation.add(menuItem("Add as moderator", IntelliTwitchIcons.Sword) {
+                twitchBot.command(ChatTwitchToolWindowContent.connectedStreamer, Commands.addModerator(message.userName))
+            })
+            moderation.add(menuItem("Remove as moderator", IntelliTwitchIcons.Sword) {
+                twitchBot.command(ChatTwitchToolWindowContent.connectedStreamer, Commands.removeModerator(message.userName))
+            })
+            return moderation
+        }
+        return null
+    }
+
+    private fun chatConfigurationMenu(message: Message): JMenu? {
+        if (twitchApi.moderatedChannel(message.streamerName)) {
+            val moderation = JBMenu()
+            moderation.text = "Configure Chat"
+            moderation.icon = AllIcons.General.Settings
+            moderation.add(menuItem("Enable emote only", IntelliTwitchIcons.Emote) {
                 twitchBot.command(ChatTwitchToolWindowContent.connectedStreamer, Commands.emoteOnly())
             })
-            moderation.add(menuItem("Disable emote only off") {
+            moderation.add(menuItem("Disable emote only", IntelliTwitchIcons.Emote) {
                 twitchBot.command(ChatTwitchToolWindowContent.connectedStreamer, Commands.emoteOnlyOff())
             })
             moderation.add(menuItem("Enable follower only") {
@@ -112,6 +129,18 @@ class MessagePanel(
             })
             moderation.add(menuItem("Disable follower only") {
                 twitchBot.command(ChatTwitchToolWindowContent.connectedStreamer, Commands.followersOff())
+            })
+            moderation.add(menuItem("Enable sub only", IntelliTwitchIcons.Sub) {
+                twitchBot.command(ChatTwitchToolWindowContent.connectedStreamer, Commands.subOnly())
+            })
+            moderation.add(menuItem("Disable sub only", IntelliTwitchIcons.Sub) {
+                twitchBot.command(ChatTwitchToolWindowContent.connectedStreamer, Commands.subOnlyOff())
+            })
+            moderation.add(menuItem("Enable slow mode") {
+                twitchBot.command(ChatTwitchToolWindowContent.connectedStreamer, Commands.slow(30))
+            })
+            moderation.add(menuItem("Disable slow mode") {
+                twitchBot.command(ChatTwitchToolWindowContent.connectedStreamer, Commands.slowOff())
             })
             moderation.add(menuItem("Enable unique chat") {
                 twitchBot.command(ChatTwitchToolWindowContent.connectedStreamer, Commands.uniqueChat())
@@ -124,8 +153,9 @@ class MessagePanel(
         return null
     }
 
-    private fun menuItem(title: String, l: ActionListener): JMenuItem {
+    private fun menuItem(title: String, icon: Icon? = null, l: ActionListener): JMenuItem {
         val item = JBMenuItem(title)
+        item.icon = icon
         item.addActionListener(l)
         return item
     }

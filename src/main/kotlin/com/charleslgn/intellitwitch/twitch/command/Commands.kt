@@ -222,6 +222,33 @@ object Commands {
     fun emoteOnlyOff(): Command = EmoteOnlyOffCommand()
 
     /**
+     * This command allows you to set your room so
+     * user can send one messages each [seconds].
+     * @return the slow in chat command
+     */
+    fun slow(seconds: Int): Command = SlowCommand(seconds)
+
+    /**
+     * This command allows you to disable slow chat
+     * @return the slow-off in chat command
+     */
+    fun slowOff(): Command = SlowOffCommand()
+
+    /**
+     * This command allows you or your mods to restrict chat
+     * to all of your subs
+     * @return the sub restrict chat command
+     */
+    fun subOnly(): Command = SubscribersCommand()
+
+    /**
+     * This command will disable sub only mode
+     * if it was previously enabled on the channel.
+     * @return the sub restrict chat off command
+     */
+    fun subOnlyOff(): Command = SubscribersOffCommand()
+
+    /**
      * An Affiliate and Partner command that runs a commercial for all of your viewers.
      * @param when when the commercial advertising should be run (30|60|90|120|150|180)
      * @return the command to run a commercial advertising
