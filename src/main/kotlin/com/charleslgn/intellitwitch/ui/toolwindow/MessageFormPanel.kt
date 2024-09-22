@@ -67,7 +67,9 @@ class MessageFormPanel(private val twitchBot: ConnectedTwitchBot, private val me
                     id = findMessageId(state),
                     userName = findUserName(state),
                     color = findColor(state),
-                    chatBadges = findBadges(state)
+                    chatBadges = findBadges(state),
+                    moderator = true,
+                    vip = false
                 )
             )
             answerTo?.let { answerTo = null }
