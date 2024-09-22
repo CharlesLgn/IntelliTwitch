@@ -37,7 +37,7 @@ class MessagePanel(val chat: JComponent,
         userLabel.font = Font(userLabel.font.name, Font.BOLD, userLabel.font.size)
 
         val messageContent = message.labels(twitchApi)
-        val mes = JPanel(WrappedFlowLayout(5, 0))
+        val mes = JPanel(WrappedFlowLayout(3, 0))
         mes.add(iconLabel)
         mes.add(userLabel)
         messageContent.forEach(mes::add)

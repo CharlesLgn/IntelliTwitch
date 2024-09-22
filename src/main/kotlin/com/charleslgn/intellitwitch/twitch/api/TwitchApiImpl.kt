@@ -18,7 +18,8 @@ import java.io.InputStreamReader
 
 class TwitchApiImpl(
     private val jsonParser: Klaxon = Klaxon(),
-    private val client:TwitchClient = TwitchClient.instance) : TwitchApi {
+    private val client: TwitchClient = TwitchClient.instance
+) : TwitchApi {
 
     override var oauthToken: String = ""
     private var refreshToken: String = ""
@@ -43,10 +44,18 @@ class TwitchApiImpl(
     override val globalBadge: Collection<BadgeData>
         get() {
             if (badgesGlobal == null) {
-                badgesGlobal = fetchAll<BadgeData>("https://api.twitch.tv/helix/chat/badges/global")
+                fetchBadgesGlobal()
             }
             return badgesGlobal!!
         }
+
+    private fun fetchBadgesGlobal() {
+        synchronized(this) {
+            if (badgesGlobal == null) {
+                badgesGlobal = fetchAll<BadgeData>("https://api.twitch.tv/helix/chat/badges/global")
+            }
+        }
+    }
 
     override fun streamerBadge(streamer: String): Collection<BadgeData> {
         val data = fetchFirst<BroadcasterData>("https://api.twitch.tv/helix/users?login=$streamer")
@@ -71,7 +80,7 @@ class TwitchApiImpl(
         return map
     }
 
-    private fun toUrl(emote:String) = "https://static-cdn.jtvnw.net/emoticons/v2/$emote/default/dark/1.0"
+    private fun toUrl(emote: String) = "https://static-cdn.jtvnw.net/emoticons/v2/$emote/default/dark/1.0"
 
     private fun authorize(params: MutableList<NameValuePair>) {
         params.add(BasicNameValuePair("client_id", client.id))

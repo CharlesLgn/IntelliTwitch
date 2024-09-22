@@ -34,9 +34,10 @@ fun Message.labels(twitchApi: TwitchApi): Collection<JLabel> {
     return completeList.map { it.jlabel(emoteMap) }
 }
 
-private fun Message.addEachWordAsALabel(begin: Int,
-                                        end: Int,
-                                        completeList: MutableList<DataDelimiter>
+private fun Message.addEachWordAsALabel(
+    begin: Int,
+    end: Int,
+    completeList: MutableList<DataDelimiter>
 ) {
     val messagesPart = messageContent.substring(begin, end)
     for (word in messagesPart.split(" ")) {
@@ -44,8 +45,8 @@ private fun Message.addEachWordAsALabel(begin: Int,
     }
 }
 
-private data class DataDelimiter(val begin:Int, val end:Int, val data:Any) {
-    fun jlabel(emoteMap:Map<String, String>): JLabel {
+private data class DataDelimiter(val begin: Int, val end: Int, val data: Any) {
+    fun jlabel(emoteMap: Map<String, String>): JLabel {
         if (data is String) {
             return data.jlabel()
         } else if (data is EmoteMessage) {
@@ -54,7 +55,7 @@ private data class DataDelimiter(val begin:Int, val end:Int, val data:Any) {
         throw IllegalArgumentException()
     }
 
-    private fun String.jlabel():JLabel {
+    private fun String.jlabel(): JLabel {
         val label = JBLabel(this)
         if (isUserAt()) {
             label.font = Font(label.font.name, Font.BOLD, label.font.size)
@@ -72,19 +73,16 @@ private data class DataDelimiter(val begin:Int, val end:Int, val data:Any) {
 
     private class LinkClickListener(val link: String) : MouseAdapter() {
         override fun mousePressed(e: MouseEvent?) {
-            var fullLink = link
-            if (!link.startsWith("www.")) {
-                fullLink = "www.$fullLink"
-            }
-            if (!link.startsWith("http://") && !link.startsWith("https://")) {
-                fullLink = "https://$fullLink"
-            }
-            BrowserUtil.open(fullLink)
+            val fullLink = link.replace("https://", "")
+                .replace("http://", "")
+                .replace("www.", "")
+            BrowserUtil.open("https://www.$fullLink")
         }
     }
 
     private fun String.isUserAt(): Boolean = "@.*".toRegex().matches(trim())
 
     private fun String.isHtmlLink(): Boolean =
-        "(?:https?://.)?(?:www\\.)?[-a-zA-Z0-9@%._+~#=]{2,256}\\.[a-z]{2,6}\\b[-a-zA-Z0-9@:%_+.~#?&/=]*".toRegex().matches(trim())
+        "(?:https?://.)?(?:www\\.)?[-a-zA-Z0-9@%._+~#=]{2,256}\\.[a-z]{2,6}\\b[-a-zA-Z0-9@:%_+.~#?&/=]*".toRegex()
+            .matches(trim())
 }
