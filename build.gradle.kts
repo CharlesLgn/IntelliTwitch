@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.ir.backend.js.compile
-
 plugins {
     id("java")
     id("org.jetbrains.kotlin.jvm") version "1.9.25"
@@ -29,6 +27,8 @@ val klaxonVersion = "5.5"
 dependencies {
     implementation("org.java-websocket:Java-WebSocket:$webSocketVersion") { exclude("org.slf4j") }
     implementation("com.beust:klaxon:$klaxonVersion")
+    testImplementation(kotlin("test"))
+
 }
 
 tasks {
@@ -55,4 +55,8 @@ tasks {
     publishPlugin {
         token.set(System.getenv("PUBLISH_TOKEN"))
     }
+}
+
+tasks.test {
+    useJUnitPlatform()
 }

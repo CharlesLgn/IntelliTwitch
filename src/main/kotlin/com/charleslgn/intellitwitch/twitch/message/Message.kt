@@ -105,10 +105,6 @@ class Message(
         }
     }
 
-    override fun toString(): String {
-        return "$id | $streamerName | $userName | $messageContent"
-    }
-
     data class EmoteMessage(val id: String, val delimiters: List<EmoteDelimiter>)
     data class EmoteDelimiter(val begin: Int, val end: Int) {
         constructor(data: String) : this(
