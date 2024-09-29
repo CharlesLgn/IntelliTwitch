@@ -11,7 +11,7 @@ data class BroadcasterData(
     val profileImageUrl: String,
 ) {
     val onScaleProfileImageUrl: String
-       get() = profileImageUrl.replace("300x300", "70x70")
+       get() = profileImageUrl
 }
 
 data class ModeratedChannelData(

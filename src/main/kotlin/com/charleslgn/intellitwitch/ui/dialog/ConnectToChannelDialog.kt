@@ -49,7 +49,7 @@ class ConnectToChannelDialog : InputDialog(
 
     private fun streamerPanel(data: StreamerData): JComponent {
         val imageUrl = URI(TwitchApi.instance.broadcasterData(data.userName).onScaleProfileImageUrl).toURL()
-        val image = ImageIcon(imageUrl).image.getScaledInstance(32, 32, Image.SCALE_AREA_AVERAGING)
+        val image = ImageIcon(imageUrl).image.getScaledInstance(30, 30, Image.SCALE_SMOOTH)
         val imageIcon = ImageIcon(image)
         val button = JButton(data.userName)
         button.addActionListener { connect(data.userName) }
@@ -57,13 +57,21 @@ class ConnectToChannelDialog : InputDialog(
         val liveLabel = JBLabel(" ● ")
         liveLabel.foreground = JBColor.RED
         viewerNumber.add(liveLabel)
-        viewerNumber.add(JBLabel(data.viewerCount.toString()))
+        viewerNumber.add(JBLabel(data.viewerCount.asCountString()))
         viewerNumber.size = Dimension(200, viewerNumber.height)
         val panel = JPanel(BorderLayout())
         panel.add(JBLabel(imageIcon), BorderLayout.WEST)
         panel.add(button, BorderLayout.CENTER)
         panel.add(viewerNumber, BorderLayout.EAST)
         return panel
+    }
+
+    private fun Int?.asCountString(): String {
+        var str = toString()
+        while (str.length < 6) {
+            str = " $str"
+        }
+        return str
     }
 
     private fun customStream(): JComponent {
