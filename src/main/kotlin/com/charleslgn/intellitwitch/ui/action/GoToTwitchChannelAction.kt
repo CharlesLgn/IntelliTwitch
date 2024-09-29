@@ -8,14 +8,14 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
 
 
-class GoToTwitchChannelAction : DumbAwareAction("Go To Twitch Channel", "Go to Twitch channel", AllIcons.General.Web) {
+class GoToTwitchChannelAction(
+    private val openInBrowser: (String) -> Unit = { url -> BrowserUtil.open(url) }
+) : DumbAwareAction("Go To Twitch Channel", "Go to Twitch channel", AllIcons.General.Web) {
 
-    override fun getActionUpdateThread(): ActionUpdateThread {
-        return ActionUpdateThread.EDT
-    }
+    override fun getActionUpdateThread() = ActionUpdateThread.EDT
 
     override fun actionPerformed(e: AnActionEvent) {
-        BrowserUtil.open("https://www.twitch.tv/${ChatTwitchToolWindowContent.connectedStreamer}")
+        openInBrowser("https://www.twitch.tv/${ChatTwitchToolWindowContent.connectedStreamer}")
     }
 
     override fun update(e: AnActionEvent) {

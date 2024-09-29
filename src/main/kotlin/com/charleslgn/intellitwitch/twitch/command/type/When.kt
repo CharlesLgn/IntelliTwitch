@@ -24,7 +24,5 @@ enum class When(private val seconds: Int) {
     THREE_MINUTE(180),
     ;
 
-    override fun toString(): String {
-        return seconds.toString()
-    }
+    override fun toString(): String = seconds.toString()
 }

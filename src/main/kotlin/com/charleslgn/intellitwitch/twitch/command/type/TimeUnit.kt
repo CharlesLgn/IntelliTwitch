@@ -50,6 +50,6 @@ data class TimeUnit(val time: Int, val unit: Unit) {
             }
         }
 
-        private class OutOfTimeException(s: String?) : Exception(s)
+        class OutOfTimeException(s: String?) : Exception(s)
     }
 }

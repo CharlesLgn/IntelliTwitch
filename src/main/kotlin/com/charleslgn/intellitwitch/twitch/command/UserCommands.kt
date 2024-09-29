@@ -79,5 +79,5 @@ internal data class MarkerCommand(val description: String) : Command {
         }
     }
 
-    private class TooLongException(s: String?) : Exception(s)
+    class TooLongException(s: String?) : Exception(s)
 }

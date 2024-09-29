@@ -142,7 +142,7 @@ object Commands {
      *
      *
      * The command also supports banning for a specific set of
-     * time via the optional [SECONDS] value.
+     * time via the optional [second] value.
      *
      *
      * To clear a timeout, either use the Unban command or overwrite the current timeout with a new, 1-second one.
@@ -161,6 +161,14 @@ object Commands {
      * @return the ban command
      */
     fun ban(user: String): Command = BanCommand(user)
+
+    /**
+     * This command will allow you unban a user from the chat room.
+     *
+     * @param user the user to ban
+     * @return the ban command
+     */
+    fun unban(user: String): Command = UnbanCommand(user)
 
     /**
      * This command allows you or your mods to restrict chat

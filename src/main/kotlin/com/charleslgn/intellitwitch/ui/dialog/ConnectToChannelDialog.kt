@@ -18,7 +18,9 @@ import java.net.URI
 import javax.swing.*
 
 
-class ConnectToChannelDialog : InputDialog(
+class ConnectToChannelDialog(
+    private val twitchApi: TwitchApi = TwitchApi.instance
+) : InputDialog(
     "Connect to a streamer channel",
     "Streamer Channel",
     AllIcons.General.OpenInToolWindow,
@@ -35,7 +37,7 @@ class ConnectToChannelDialog : InputDialog(
 
     override fun createMessagePanel(): JPanel {
         val stream = JPanel(VerticalFlowLayout())
-        TwitchApi.instance.myStreamers.map { data -> streamerPanel(data) }.forEach { stream.add(it) }
+        twitchApi.myStreamers.map { data -> streamerPanel(data) }.forEach { stream.add(it) }
         val scroll = JBScrollPane(
             stream,
             ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
@@ -48,7 +50,7 @@ class ConnectToChannelDialog : InputDialog(
     }
 
     private fun streamerPanel(data: StreamerData): JComponent {
-        val imageUrl = URI(TwitchApi.instance.broadcasterData(data.userName).onScaleProfileImageUrl).toURL()
+        val imageUrl = URI(twitchApi.broadcasterData(data.userName).onScaleProfileImageUrl).toURL()
         val image = ImageIcon(imageUrl).image.getScaledInstance(30, 30, Image.SCALE_SMOOTH)
         val imageIcon = ImageIcon(image)
         val button = JButton(data.userName)

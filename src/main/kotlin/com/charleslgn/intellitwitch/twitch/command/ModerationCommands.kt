@@ -48,17 +48,14 @@ internal data class UnbanCommand(val user: String) : Command {
  * A new timeout command will overwrite an old one.
  *
  * The command also supports banning for a specific set of
- * time via the optional [SECONDS] value.
+ * time via the optional [second] value.
  *
  * To clear a timeout, either use the Unban command or overwrite the current timeout with a new, 1-second one.
  */
 internal data class TimeoutCommand(val user: String, val second: Int?) : Command {
-    private fun getSecond(): String {
-        return second?.toString() ?: ""
-    }
 
     override val command: String
-        get() = "/timeout " + user + " " + getSecond()
+        get() = "/timeout $user ${second ?: ""}"
 }
 
 /**

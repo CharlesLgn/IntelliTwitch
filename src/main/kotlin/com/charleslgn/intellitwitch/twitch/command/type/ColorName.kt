@@ -49,7 +49,5 @@ enum class ColorName(private val color: String) {
     /** The color firegrick  */
     FIREBRICK("Firebrick");
 
-    override fun toString(): String {
-        return color
-    }
+    override fun toString() = color
 }
