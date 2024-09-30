@@ -2,6 +2,9 @@ package com.charleslgn.intellitwitch.ui.action
 
 import com.charleslgn.intellitwitch.ui.toolwindow.ChatTwitchToolWindowContent
 import com.intellij.openapi.actionSystem.ActionUpdateThread
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.Presentation
+import org.mockito.Mockito
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -14,7 +17,9 @@ class TestGoToTwitchChannelAction {
     fun test() {
         var result = ""
         val action = GoToTwitchChannelAction { url -> result = url }
-        val e = newAnActionEvent()
+        val e = Mockito.mock(AnActionEvent::class.java)
+        val presentation = Presentation()
+        Mockito.doReturn(presentation).`when`(e).presentation
         ChatTwitchToolWindowContent.connectedStreamer = ""
         assertEquals(ActionUpdateThread.EDT, action.actionUpdateThread)
         action.update(e)

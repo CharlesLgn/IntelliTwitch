@@ -24,11 +24,15 @@ val webSocketVersion = "1.5.2"
 val httpclientVersion = "4.5.14"
 val klaxonVersion = "5.5"
 
+val assertJVersion = "3.23.1"
+val mockitoVersion = "3.10.0"
+
 dependencies {
     implementation("org.java-websocket:Java-WebSocket:$webSocketVersion") { exclude("org.slf4j") }
     implementation("com.beust:klaxon:$klaxonVersion")
     testImplementation(kotlin("test"))
-
+    testImplementation("org.assertj:assertj-core:$assertJVersion")
+    testImplementation("org.mockito:mockito-core:$mockitoVersion")
 }
 
 tasks {
