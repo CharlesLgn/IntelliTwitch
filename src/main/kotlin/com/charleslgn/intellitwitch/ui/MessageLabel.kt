@@ -15,7 +15,7 @@ import java.util.HashMap
 import javax.swing.ImageIcon
 import javax.swing.JLabel
 
-fun Message.labels(twitchApi: TwitchApi): Collection<JLabel> {
+fun Message.labels(twitchApi: TwitchApi): List<JLabel> {
     val emoteMap = twitchApi.emotes(emotes.map { it.id })
     val list: MutableList<DataDelimiter> = ArrayList()
     emotes.forEach { emote -> emote.delimiters.forEach { d -> list.add(DataDelimiter(d.begin, d.end, emote)) } }
