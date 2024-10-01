@@ -8,7 +8,7 @@ IntelliTwitch is a Jetbrains IDE plugin to have a look at Twitch chanel
 
 in twitch :
 - register yourself in [dev.twitch.tv](https://dev.twitch.tv/)
-- is you console, register an app
+- in you console, register an app
    - URL de redirection OAuth : `http://localhost:9856/oauth`
    - choose a `client id`
    - generate a `client secret`
